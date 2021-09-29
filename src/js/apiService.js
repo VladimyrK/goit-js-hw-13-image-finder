@@ -7,5 +7,6 @@ export default async function getFetch(search) {
   if (!promise.ok) {
     throw new Error(promise.status);
   }
-  return await promise.json();
+  const data = await promise.json();
+  return data.hits;
 }
