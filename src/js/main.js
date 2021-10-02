@@ -47,13 +47,16 @@ form.addEventListener('submit', async e => {
       data = await getFetch(e.target.elements.query.value, page);
 
       list.insertAdjacentHTML('beforeend', template(data));
-      const elems = document.querySelectorAll('.photo-card');
-      elems[firstNewElem].scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-
       list.appendChild(btnMore);
+      const elems = document.querySelectorAll('.photo-card');
+
+      function scroll() {
+        list.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
+      }
+      setTimeout(scroll, 100);
     });
   }
 
@@ -68,13 +71,10 @@ form.addEventListener('submit', async e => {
 
         modal.classList.add('is-open');
         modalImg.setAttribute('src', LargeImgSrc);
-        modalBtnClose.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', closeModal);
-        window.addEventListener('keydown', e => {
-          if (e.key === 'Escape') {
-            closeModal();
-          }
-        });
+
+        modalBtnClose.addEventListener('click', closeModalBtn);
+        modalOverlay.addEventListener('click', closeModalOverlay);
+        window.addEventListener('keydown', closeModalByEscape);
       }
     });
   }
@@ -83,4 +83,18 @@ form.addEventListener('submit', async e => {
 function closeModal() {
   modal.classList.remove('is-open');
   modalImg.setAttribute('src', '');
+}
+function closeModalBtn() {
+  closeModal();
+  modalBtnClose.removeEventListener('click', closeModalBtn);
+}
+function closeModalOverlay() {
+  closeModal();
+  modalOverlay.removeEventListener('click', closeModalOverlay);
+}
+function closeModalByEscape(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+  window.removeEventListener('keydown', closeModalByEscape);
 }
